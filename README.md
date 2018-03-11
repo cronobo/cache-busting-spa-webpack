@@ -20,6 +20,12 @@ Associate the Firebase project you've just created with this repo, and you're re
 firebase use --add <your-firebase-project-name>
 ```
 
+## Important
+
+Firefox and Chrome will perform a hot reload if you click the reload button.
+
+To make sure you are not clearing your browser's cache unintentionally (which would defeat the purpose of this demo), simply click in the url and hit `Enter`.
+
 ## Deploy
 
 First, checkout branch `step-1-cache-everything`, build the project and deploy

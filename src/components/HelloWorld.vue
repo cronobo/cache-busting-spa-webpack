@@ -10,7 +10,7 @@ export default {
   name: 'HelloWorld',
   data() {
     return {
-      msg: 'This is version 1',
+      msg: 'This is version 1 with cache correctly configured',
     };
   },
 };

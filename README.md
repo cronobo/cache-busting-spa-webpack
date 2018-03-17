@@ -26,26 +26,47 @@ Firefox and Chrome will perform a hot reload if you click the reload button.
 
 To make sure you are not clearing your browser's cache unintentionally (which would defeat the purpose of this demo), simply click in the url and hit `Enter`.
 
-## Deploy
+## Observe the issue
 
-First, checkout branch `step-1-cache-everything`, build the project and deploy
+### Step 1 - deploy
+
+Checkout branch `step-1-cache-everything`, build the project and deploy
 
 ```
 git checkout step-1-cache-everything
 npm run build && firebase deploy
 ```
 
-To observe the behavior of your browser cache, and how your SPA is **NOT updating immediately**:
+Open your browser -> DevTools -> Network panel, then navigate a first time to your deployed app.
 
-1. Navigate a first time to your deployed app (URL should be `https://<your-firebase-project-name>.firebaseapp.com`)
-2. In `./src/components/HelloWorld.vue`, modify the `msg` variable (default value: `This is version 1`) to some other value
-3. Run `firebase deploy` and navigate again to your deployed app
-4. Observe that the message is still `This is version 1` and not the new version.
-5. Perform a forced reload (`Ctrl + F5`) and observe the message is updated this time
+(URL should be `https://<your-firebase-project-name>.firebaseapp.com`).
 
-> Why ? Go to Medium article
+![step 1 loads all files](step_1_initial_load.png)
 
-Then, checkout branch `step-2-no-cache-on-root`, re-build, re-deploy.
+As you can see, all files are being loaded with return code `200`.
+
+### Step 2 - observe caching at work
+
+In `./src/components/HelloWorld.vue`, modify the `msg` variable (default value: `This is version 1`) to some other value
+
+Run
+```
+npm run build && firebase deploy
+```
+and navigate again to your app (click `Enter` inside URL bar to avoid unwanted forced reloads).
+
+You should observe that the message has not changed, and is still `This is version 1`, despite the update.
+
+![](step_2_cache_is_not_good.png)
+
+In the network tabs, you can see that all files are displayed in grey, meaning their cached version was reused.
+
+If you perform a forced reload (`Ctrl + F5`), you can observe that this time the message gets updated.
+
+### Step 3 - fix caching for immediate update
+
+Checkout branch `step-2-no-cache-on-root` and redeploy.
+In this branch, `index.html` caching setting was changed to `cache-control:no-cache` (see `firebase.json`)
 
 ```
 git checkout step-2-no-cache-on-root
@@ -54,8 +75,12 @@ npm run build && firebase deploy
 
 Force your browser to update its cache by navigating again to your deployed app and performing a forced reload (`Ctrl + F5`).
 
-Then performs the same steps as above. Observe that this time the msg is updated immediately without needing to perform a forced reload.
+Then, change msg, re-build and re-deploy, and navigate to the page **without forced reload** (Click enter in URL bar).
 
+You should observe this time that your application was correctly updated, and the new message is displayed. Issue is fixed.
+In the networks tab, you can see that `index.html` and two of the application files (`app.xxxx.js`) were updated, meaning your cache is properly configured for immediate updates.
+
+![cache is now ok](step_4_cache_configured.png)
 
 ## Run locally
 
